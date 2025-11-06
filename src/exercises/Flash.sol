@@ -6,11 +6,19 @@ import {IERC20} from "../interfaces/IERC20.sol";
 import {IPool} from "../interfaces/aave-v3/IPool.sol";
 import {POOL} from "../Constants.sol";
 
-contract Flash {
-    IPool public constant pool = IPool(POOL);
+contract Flash { // => initiator
+    IPool public constant pool = IPool(POOL); // => pool contract
 
     // Task 1 - Initiate flash loan
-    function flash(address token, uint256 amount) public {}
+    function flash(address token, uint256 amount) public {
+        pool.flashLoanSimple(
+            address(this),
+            token,
+            amount,
+            abi.encode(msg.sender),  // => caller 
+            0
+        );
+    }
 
     // Task 2 - Repay flash loan
     function executeOperation(
@@ -21,14 +29,22 @@ contract Flash {
         bytes calldata params
     ) public returns (bool) {
         // Task 2.1 - Check that msg.sender is the pool contract
+        require(msg.sender == address(pool), "invalid pool caller");
 
         // Task 2.2 - Check that initiator is this contract
+        require(initiator == address(this), "invalid initiator");
+
+        console.log("Amount and fee", amount, fee);
 
         // Task 2.3 - Decode caller from params and transfer
+        address caller = abi.decode(params, (address));
         // flash loan fee from this caller
+        IERC20(asset).transferFrom(caller, address(this), fee);
 
         // Task 2.4 - Approve the pool to spend flash loaned amount + fee
+        IERC20(asset).approve(address(pool), amount + fee);
 
         // Task 2.5 - Return true
+        return true;
     }
 }
