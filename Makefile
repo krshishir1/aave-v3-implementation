@@ -15,3 +15,6 @@ testing-2:
 testing-loan:
 	forge test --mt test_flash $(NETWORK_ARGS) -vvv
 
+testing-supply:
+	forge test --mt test_supply $(NETWORK_ARGS) -vvv
+

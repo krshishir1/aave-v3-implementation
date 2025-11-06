@@ -16,16 +16,16 @@ contract SupplyTest is Test {
     function setUp() public {
         // Get aWETH address
         IPool.ReserveData memory reserve = pool.getReserveData(WETH);
-        aWeth = IERC20(reserve.aTokenAddress);
+        aWeth = IERC20(reserve.aTokenAddress);  // => collateral token shares address
 
-        deal(WETH, address(this), 1e18);
-        target = new Supply();
+        deal(WETH, address(this), 1 ether); // transfer 1 ether to this address
+        target = new Supply(); // initiator contract
     }
 
     function test_supply() public {
         uint256 wethBalBefore = weth.balanceOf(address(this));
-        weth.approve(address(target), 1e18);
-        target.supply(WETH, 1e18);
+        weth.approve(address(target), 1 ether); // approve the initiator
+        target.supply(WETH, 1 ether);
         uint256 wethBalAfter = weth.balanceOf(address(this));
 
         assertEq(
