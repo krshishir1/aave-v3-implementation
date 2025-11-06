@@ -68,5 +68,16 @@ contract BorrowTest is Test {
         console.log("Amount to borrow: ", borrowAmount);
 
         target.borrow(address(dai), borrowAmount);
+
+        vm.warp(block.timestamp + 1 days);
+
+        uint256 debtIncurred = target.getVariableDebt(address(dai));
+        console.log("Variable Debt: ", debtIncurred);
+        console.log("Debt difference: ", debtIncurred - borrowAmount);
+    }
+
+    function test_variableDebtIncurred() public {
+        uint256 debtIncurred = target.getVariableDebt(address(dai));
+        console.log("Variable Debt: ", debtIncurred);
     }
 }
