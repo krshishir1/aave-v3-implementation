@@ -21,12 +21,16 @@ contract LiquidateTest is Test {
         deal(WETH, address(this), 1 ether); // mint 1 ether to this contract
         weth.approve(address(pool), type(uint256).max);
 
+        _printHealthFactor(1);
+
         pool.supply({
             asset: WETH,
             amount: 1 ether,
             onBehalfOf: address(this),
             referralCode: 0
         }); // supply collateral to pool
+
+        _printHealthFactor(2);
 
         // Borrow
         vm.mockCall(
@@ -44,6 +48,7 @@ contract LiquidateTest is Test {
         }); // 1000 DAI borrowed
 
         _printCollateralAndDebt(1);
+        _printHealthFactor(3);
 
         uint256 ethPrice = 500 * 1e8;
 
@@ -72,6 +77,7 @@ contract LiquidateTest is Test {
             .getUserAccountData(address(this));
 
         _printCollateralAndDebt(2);
+        _printHealthFactor(4);
 
         target.liquidate(WETH, DAI, address(this));
 
@@ -79,6 +85,7 @@ contract LiquidateTest is Test {
             .getUserAccountData(address(this));
 
         _printCollateralAndDebt(3);
+        _printHealthFactor(5);
 
         assertLt(colUsdAfter, colUsdBefore, "USD collateral after");
         assertLt(debtUsdAfter, debtUsdBefore, "USD debt after");
@@ -95,4 +102,13 @@ contract LiquidateTest is Test {
 
         console.log(index, "Assets balance: ", colUsd, debtUsd);
     }
+
+    function _printHealthFactor(uint8 index) internal view {
+        (, , , , , uint256 healthFactor) = pool.getUserAccountData(
+            address(this)
+        );
+        console.log("Health Factor: ", index, healthFactor);
+    }
 }
+
+// 1660265642477893806
