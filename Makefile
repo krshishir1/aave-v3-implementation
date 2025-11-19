@@ -18,3 +18,8 @@ testing-loan:
 testing-supply:
 	forge test --mt test_supply $(NETWORK_ARGS) -vvv
 
+testing-liquidate:
+	forge test --mt test_liquidate $(NETWORK_ARGS) -vvv
+
+
+
