@@ -21,5 +21,7 @@ testing-supply:
 testing-liquidate:
 	forge test --mt test_liquidate $(NETWORK_ARGS) -vvv
 
+testing-longopen: 
+	forge test --mt test_long_weth $(NETWORK_ARGS) -v
 
 
